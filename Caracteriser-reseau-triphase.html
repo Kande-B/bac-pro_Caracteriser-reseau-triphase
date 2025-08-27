@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exploration du Réseau Triphasé : Tensions et Sécurité</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #001f3f, #007bff);
+            color: #ffffff;
+            line-height: 1.6;
+            background-attachment: fixed;
+        }
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(0, 31, 63, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border-bottom: 3px solid #ffd700;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 3em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #ffd700;
+        }
+        header p {
+            font-size: 1.4em;
+            opacity: 0.95;
+        }
+        .objectives {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+        .objectives h2 {
+            color: #ffd700;
+            font-size: 2em;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+        }
+        .objectives ul {
+            list-style-type: square;
+            margin-left: 25px;
+        }
+        nav {
+            text-align: center;
+            padding: 25px;
+            background: rgba(0, 31, 63, 0.95);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav a {
+            margin: 0 25px;
+            text-decoration: none;
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 1.2em;
+            padding: 12px 25px;
+            border-radius: 30px;
+            transition: background 0.4s, color 0.4s;
+        }
+        nav a:hover {
+            background: #ffd700;
+            color: #001f3f;
+        }
+        section {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 35px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+            transition: transform 0.4s;
+            backdrop-filter: blur(5px);
+        }
+        section:hover {
+            transform: scale(1.02);
+        }
+        h2 {
+            color: #ffd700;
+            font-size: 2em;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+        }
+        h3 {
+            color: #00bfff;
+            margin-top: 35px;
+        }
+        p {
+            font-size: 1.15em;
+            margin-bottom: 25px;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 25px;
+        }
+        iframe {
+            display: block;
+            margin: 25px auto;
+            border: 3px solid #ffd700;
+            border-radius: 10px;
+            max-width: 100%;
+        }
+        .quiz {
+            background: rgba(0, 31, 63, 0.8);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #ffd700;
+        }
+        .quiz label {
+            display: block;
+            margin: 12px 0;
+            color: #ffffff;
+        }
+        .quiz button {
+            background: #ffd700;
+            color: #001f3f;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        .quiz button:hover {
+            background: #00bfff;
+            color: #ffffff;
+        }
+        .result {
+            margin-top: 25px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        .checklist {
+            background: rgba(0, 191, 255, 0.1);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #00bfff;
+            margin-top: 25px;
+        }
+        .checklist label {
+            display: block;
+            margin: 12px 0;
+        }
+        .summary {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 18px;
+            border-left: 5px solid #ffd700;
+            margin-bottom: 25px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .card {
+            background: rgba(0, 31, 63, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            padding: 18px;
+            color: #ffffff;
+        }
+        .card .head {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #ffd700;
+        }
+        .card .head .muted {
+            font-size: 0.95em;
+            color: #a9a9a9;
+        }
+        .card .body {
+            font-size: 1.05em;
+        }
+        .card .row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .card .sw {
+            width: 25px;
+            height: 25px;
+            margin-right: 12px;
+            border: 1px solid #ffd700;
+            border-radius: 50%;
+        }
+        .card .badge {
+            background: #00bfff;
+            color: #001f3f;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            margin-left: 12px;
+        }
+        canvas {
+            display: block;
+            margin: 25px auto;
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+        }
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: rgba(0, 31, 63, 0.9);
+            color: #ffd700;
+            margin-top: 50px;
+            border-top: 3px solid #ffd700;
+        }
+        .interactive-sim {
+            text-align: center;
+            margin: 25px 0;
+        }
+        .interactive-sim button {
+            background: #00bfff;
+            color: #ffffff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .interactive-sim button:hover {
+            background: #ffd700;
+            color: #001f3f;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Exploration du Réseau Triphasé : Tensions et Sécurité</h1>
+        <p>Découvrez le monde fascinant des réseaux triphasés à travers des explications interactives, des animations et des quizzes pour les élèves de Bac Pro.</p>
+    </header>
+    
+    <div class="objectives">
+        <h2>Objectifs Pédagogiques</h2>
+        <ul>
+            <li>Maîtriser l'identification des conducteurs électriques via le code couleur NF C 15-100 pour une installation sécurisée.</li>
+            <li>Visualiser et analyser les tensions triphasées avec des outils comme l'oscilloscope pour comprendre les déphasages.</li>
+            <li>Appliquer la relation mathématique entre tensions simples et composées dans des contextes réels.</li>
+            <li>Explorer les applications pratiques et les avantages des systèmes triphasés dans l'industrie.</li>
+        </ul>
+    </div>
+    
+    <nav>
+        <a href="#section1">Code Couleur des Conducteurs</a>
+        <a href="#section2">Visualisation des Tensions</a>
+        <a href="#section3">Relations Tensions Simples/Composées</a>
+        <a href="#section4">Applications et Avantages</a>
+    </nav>
+    
+    <section id="section1">
+        <h2>Le Code Couleur des Conducteurs Électriques (NF C 15-100)</h2>
+        <p>Dans les installations électriques, le respect du code couleur est essentiel pour la sécurité et la conformité. Basé sur la norme NF C 15-100, ce système évite les confusions et protège contre les risques d'électrocution.</p>
+        <h3>Étapes pour Identifier les Conducteurs</h3>
+        <ul>
+            <li>Examinez les couleurs : Bleu pour le neutre, Vert-Jaune pour la terre, Marron/Noir/Gris pour les phases.</li>
+            <li>Utilisez un multimètre pour vérifier les tensions et confirmer les rôles.</li>
+            <li>Appliquez en monophasé (1 phase + neutre + terre) ou triphasé (3 phases + neutre + terre).</li>
+        </ul>
+        <div class="grid">
+            <div class="card">
+                <div class="head">Code Couleur Standard <span class="muted">(Règles Essentielles)</span></div>
+                <div class="body">
+                    <div class="row"><div class="sw" style="background:linear-gradient(90deg, #228b22, #ffd700)"></div><b>Terre (PE)</b>: Vert/Jaune - Protection contre les chocs.</div>
+                    <div class="row"><div class="sw" style="background:#87ceeb"></div><b>Neutre</b>: Bleu - Retour du courant.</div>
+                    <div class="row"><div class="sw" style="background:#8b4513"></div><b>Phase L1</b>: Marron</div>
+                    <div class="row"><div class="sw" style="background:#000000"></div><b>Phase L2</b>: Noir</div>
+                    <div class="row"><div class="sw" style="background:#808080"></div><b>Phase L3</b>: Gris</div>
+                    <p class="muted">Autres couleurs autorisées pour phases en monophasé, sauf bleu et vert/jaune.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="head">Monophasé vs Triphasé <span class="badge">Simulation Interactive</span></div>
+                <div class="body">
+                    <canvas id="conductorSim" width="400" height="200"></canvas>
+                    <div class="interactive-sim">
+                        <button onclick="toggleMode('mono')">Monophasé</button>
+                        <button onclick="toggleMode('tri')">Triphasé</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p>Vidéo Explicative :</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/dM0c7TufhOg" title="Le Courant Triphasé" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        
+        <h3>Récapitulatif</h3>
+        <div class="summary">
+            La norme NF C 15-100, obligatoire en France depuis 1969 pour les installations électriques basse tension, définit un code couleur strict pour les conducteurs afin de garantir la sécurité, faciliter l'identification et éviter les erreurs lors des installations ou des maintenances. Le conducteur neutre est toujours bleu clair, réservé exclusivement à cette fonction pour assurer le retour du courant. Le conducteur de protection (terre ou PE) est bicolore vert-jaune, jouant un rôle crucial en évacuant les courants de défaut vers la terre pour prévenir les électrocutions et déclencher les dispositifs de protection comme les différentiels. Pour les phases, en monophasé, une phase unique peut être marron, noir ou d'autres couleurs sauf bleu et vert-jaune ; en triphasé, les trois phases sont typiquement marron (L1), noir (L2) et gris (L3), permettant une répartition équilibrée de la charge. Ce code couleur réduit les risques de confusion, assure la conformité aux normes européennes harmonisées, et est essentiel pour les vérifications avec des outils comme le multimètre. Toute déviation peut entraîner des dangers graves, des non-conformités lors des contrôles Consuel, ou des dysfonctionnements dans les systèmes électriques.
+        </div>
+        
+        <h3>Quiz Interactif</h3>
+        <div class="quiz">
+            <form id="quiz1">
+                <p>1. Quelle couleur pour le neutre ?</p>
+                <label><input type="radio" name="q1" value="a"> Vert-Jaune</label>
+                <label><input type="radio" name="q1" value="b"> Bleu</label>
+                <label><input type="radio" name="q1" value="c"> Marron</label>
+                
+                <p>2. Couleur interdite pour une phase ?</p>
+                <label><input type="radio" name="q2" value="a"> Noir</label>
+                <label><input type="radio" name="q2" value="b"> Bleu</label>
+                <label><input type="radio" name="q2" value="c"> Gris</label>
+                
+                <p>3. En triphasé, combien de phases ?</p>
+                <label><input type="radio" name="q3" value="a"> 1</label>
+                <label><input type="radio" name="q3" value="b"> 3</label>
+                <label><input type="radio" name="q3" value="c"> 4</label>
+                
+                <p>4. Quelle couleur pour la terre ?</p>
+                <label><input type="radio" name="q4" value="a"> Bleu</label>
+                <label><input type="radio" name="q4" value="b"> Vert-Jaune</label>
+                <label><input type="radio" name="q4" value="c"> Gris</label>
+                
+                <p>5. Couleur typique pour L1 en triphasé ?</p>
+                <label><input type="radio" name="q5" value="a"> Marron</label>
+                <label><input type="radio" name="q5" value="b"> Noir</label>
+                <label><input type="radio" name="q5" value="c"> Bleu</label>
+                
+                <p>6. Pourquoi le code couleur est-il important ?</p>
+                <label><input type="radio" name="q6" value="a"> Pour la beauté</label>
+                <label><input type="radio" name="q6" value="b"> Pour la sécurité</label>
+                <label><input type="radio" name="q6" value="c"> Pour augmenter la tension</label>
+                
+                <button type="button" onclick="checkQuiz1()">Valider</button>
+            </form>
+            <div id="result1" class="result"></div>
+        </div>
+        
+        <div class="checklist">
+            <h3>Auto-Évaluation</h3>
+            <label><input type="checkbox"> Identifier conducteurs en monophasé.</label>
+            <label><input type="checkbox"> Appliquer code couleur en triphasé.</label>
+            <label><input type="checkbox"> Comprendre rôle de la terre.</label>
+        </div>
+    </section>
+    
+    <section id="section2">
+        <h2>Visualisation des Tensions Triphasées</h2>
+        <p>Utilisez un oscilloscope pour observer les courbes sinusoïdales des tensions triphasées, déphasées de 120°, assurant une alimentation stable.</p>
+        <h3>Étapes Expérimentales</h3>
+        <ul>
+            <li>Connectez le générateur triphasé ou un réseau à l'oscilloscope/ExAO.</li>
+            <li>Visualisez les trois tensions phase-neutre (simples) et phase-phase (composées).</li>
+            <li>Mesurez le déphasage (120° entre phases).</li>
+            <li>Enregistrez les courbes et analysez.</li>
+        </ul>
+        <div class="card">
+            <div class="head">Simulation des Ondes Triphasées <span class="badge">Interactive</span></div>
+            <div class="body">
+                <canvas id="waveSim" width="600" height="300"></canvas>
+                <div class="interactive-sim">
+                    <button onclick="changeFrequency(50)">Fréquence 50Hz</button>
+                    <button onclick="changeFrequency(100)">Fréquence 100Hz</button>
+                </div>
+            </div>
+        </div>
+        <p>Vidéo Démonstrative :</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/pFdhRZDi-dA" title="Oscillogramme Tensions Triphasées" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        
+        <h3>Récapitulatif</h3>
+        <div class="summary">
+            Dans un système triphasé, les trois tensions sont des signaux sinusoïdaux de même fréquence (généralement 50 Hz en Europe) et de même amplitude, mais déphasés les uns par rapport aux autres de 120 degrés (ou 2π/3 radians). Ce déphasage est généré par la rotation d'un alternateur où les bobines du stator sont disposées à 120 degrés les unes des autres, produisant ainsi trois tensions alternatives décalées. Sur un oscilloscope, ces tensions apparaissent comme trois courbes sinusoïdales superposées, avec un décalage temporel correspondant à un tiers de période. Contrairement au monophasé, où la puissance délivrée varie sinusoïdalement et passe par zéro deux fois par période, entraînant des pulsations et des vibrations dans les moteurs, le triphasé offre une puissance instantanée totale constante. En effet, la somme des puissances des trois phases s'annule mutuellement les variations, résultant en une puissance moyenne stable sans fluctuations, ce qui améliore l'efficacité énergétique, réduit les pertes et permet un fonctionnement plus fluide des équipements comme les moteurs asynchrones. Cela rend le triphasé idéal pour les applications industrielles nécessitant une alimentation fiable et constante.
+        </div>
+        
+        <h3>Quiz Interactif</h3>
+        <div class="quiz">
+            <form id="quiz2">
+                <p>1. Déphasage entre phases ?</p>
+                <label><input type="radio" name="q1" value="a"> 90°</label>
+                <label><input type="radio" name="q1" value="b"> 120°</label>
+                <label><input type="radio" name="q1" value="c"> 180°</label>
+                
+                <p>2. Outil pour visualisation ?</p>
+                <label><input type="radio" name="q2" value="a"> Voltmètre</label>
+                <label><input type="radio" name="q2" value="b"> Oscilloscope</label>
+                <label><input type="radio" name="q2" value="c"> Ampèremètre</label>
+                
+                <p>3. Forme des tensions ?</p>
+                <label><input type="radio" name="q3" value="a"> Carrée</label>
+                <label><input type="radio" name="q3" value="b"> Sinusoïdale</label>
+                <label><input type="radio" name="q3" value="c"> Triangulaire</label>
+                
+                <p>4. Nombre de phases en triphasé ?</p>
+                <label><input type="radio" name="q4" value="a"> 2</label>
+                <label><input type="radio" name="q4" value="b"> 3</label>
+                <label><input type="radio" name="q4" value="c"> 4</label>
+                
+                <p>5. Avantage du déphasage ?</p>
+                <label><input type="radio" name="q5" value="a"> Puissance variable</label>
+                <label><input type="radio" name="q5" value="b"> Puissance constante</label>
+                <label><input type="radio" name="q5" value="c"> Tension plus basse</label>
+                
+                <p>6. Qu'est-ce qu'une tension simple ?</p>
+                <label><input type="radio" name="q6" value="a"> Phase-phase</label>
+                <label><input type="radio" name="q6" value="b"> Phase-neutre</label>
+                <label><input type="radio" name="q6" value="c"> Phase-terre</label>
+                
+                <button type="button" onclick="checkQuiz2()">Valider</button>
+            </form>
+            <div id="result2" class="result"></div>
+        </div>
+        
+        <div class="checklist">
+            <h3>Auto-Évaluation</h3>
+            <label><input type="checkbox"> Visualiser ondes triphasées.</label>
+            <label><input type="checkbox"> Mesurer déphasage.</label>
+            <label><input type="checkbox"> Utiliser oscilloscope.</label>
+        </div>
+    </section>
+    
+    <section id="section3">
+        <h2>Relation entre Tensions Simples et Composées</h2>
+        <p>Appliquez la relation pour calculer les tensions dans un système triphasé.</p>
+        <h3>Étapes de Calcul</h3>
+        <ul>
+            <li>Mesurez la tension simple U_s (phase-neutre).</li>
+            <li>Utilisez la relation U_c = √3 * U_s pour la tension composée (phase-phase).</li>
+            <li>Vérifiez expérimentalement avec un voltmètre.</li>
+            <li>Appliquez à des cas réels comme 230V simple → 400V composée.</li>
+        </ul>
+        <div class="interactive-sim">
+            <input type="number" id="uSimple" placeholder="U Simple (V)" value="230">
+            <button onclick="calculateU()">Calculer U Composée</button>
+            <p id="uResult"></p>
+        </div>
+        <p>Vidéo Explicative :</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/a5sqKkIHeKY" title="Tensions Simples et Composées" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        
+        <h3>Récapitulatif</h3>
+        <div class="summary">
+            Dans un réseau triphasé équilibré, la tension composée U_c (mesurée entre deux phases) est liée à la tension simple U_s (mesurée entre une phase et le neutre) par la relation mathématique U_c = U_s × √3. Cette formule découle du déphasage de 120 degrés entre les phases : en considérant les tensions comme des vecteurs dans un plan complexe ou un diagramme de Fresnel, la différence vectorielle entre deux tensions simples déphasées de 120° donne une amplitude égale à 2 × U_s × sin(60°) = U_s × √3, car sin(60°) = √3/2. Par exemple, en France, avec U_s = 230 V (valeur efficace), U_c = 230 × √3 ≈ 400 V, ce qui correspond au réseau standard 230/400 V à 50 Hz. Cette relation est valide uniquement pour des systèmes équilibrés où les amplitudes sont identiques et les déphasages exacts ; en cas de déséquilibre, elle doit être ajustée. Elle permet une transmission d'énergie plus efficace, car pour une même puissance, le triphasé nécessite moins de conducteurs ou des sections plus petites, réduisant les pertes par effet Joule. Dans les applications pratiques, comme les moteurs ou les transformateurs, cette distinction assure une alimentation adaptée, évitant les surcharges ou les sous-tensions.
+        </div>
+        
+        <h3>Quiz Interactif</h3>
+        <div class="quiz">
+            <form id="quiz3">
+                <p>1. Relation U_composée / U_simple ?</p>
+                <label><input type="radio" name="q1" value="a"> √2</label>
+                <label><input type="radio" name="q1" value="b"> √3</label>
+                <label><input type="radio" name="q1" value="c"> 2</label>
+                
+                <p>2. Si U_simple = 230V, U_composée = ?</p>
+                <label><input type="radio" name="q2" value="a"> 230V</label>
+                <label><input type="radio" name="q2" value="b"> 400V</label>
+                <label><input type="radio" name="q2" value="c"> 460V</label>
+                
+                <p>3. Origine de la relation ?</p>
+                <label><input type="radio" name="q3" value="a"> Déphasage 90°</label>
+                <label><input type="radio" name="q3" value="b"> Déphasage 120°</label>
+                <label><input type="radio" name="q3" value="c"> Déphasage 180°</label>
+                
+                <p>4. Tension phase-neutre est appelée ?</p>
+                <label><input type="radio" name="q4" value="a"> Composée</label>
+                <label><input type="radio" name="q4" value="b"> Simple</label>
+                <label><input type="radio" name="q4" value="c"> Équilibrée</label>
+                
+                <p>5. Si U_composée = 400V, U_simple ≈ ?</p>
+                <label><input type="radio" name="q5" value="a"> 230V</label>
+                <label><input type="radio" name="q5" value="b"> 200V</label>
+                <label><input type="radio" name="q5" value="c"> 400V</label>
+                
+                <p>6. La relation est valide pour un système ?</p>
+                <label><input type="radio" name="q6" value="a"> Déséquilibré</label>
+                <label><input type="radio" name="q6" value="b"> Équilibré</label>
+                <label><input type="radio" name="q6" value="c"> Monophasé</label>
+                
+                <button type="button" onclick="checkQuiz3()">Valider</button>
+            </form>
+            <div id="result3" class="result"></div>
+        </div>
+        
+        <div class="checklist">
+            <h3>Auto-Évaluation</h3>
+            <label><input type="checkbox"> Appliquer formule U = √3 × U_s.</label>
+            <label><input type="checkbox"> Calculer tensions réelles.</label>
+            <label><input type="checkbox"> Vérifier expérimentalement.</label>
+        </div>
+    </section>
+    
+    <section id="section4">
+        <h2>Applications et Avantages des Réseaux Triphasés</h2>
+        <p>Les systèmes triphasés sont utilisés dans l'industrie pour alimenter moteurs, transformateurs et réseaux électriques, offrant efficacité et puissance constante.</p>
+        <h3>Avantages Clés</h3>
+        <ul>
+            <li>Puissance stable sans fluctuations.</li>
+            <li>Transmission économique sur longues distances.</li>
+            <li>Utilisation dans machines industrielles et habitats.</li>
+        </ul>
+        <p>Vidéo sur les Applications :</p>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/JwOTA5a2mK0" title="Pourquoi le Triphasé ?" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        
+        <h3>Récapitulatif</h3>
+        <div class="summary">
+            Comparé au monophasé, qui est adapté aux usages domestiques de faible puissance (jusqu'à 6-18 kVA) avec une tension unique variant entre phase et neutre, le réseau triphasé offre de nombreux avantages pour les applications industrielles et à haute puissance. Il permet de délivrer près de deux fois plus d'énergie avec les mêmes conducteurs, grâce à ses trois phases déphasées de 120°, réduisant les sections de câbles nécessaires et minimisant les pertes par effet Joule lors de la transmission sur de longues distances. La puissance est constante, sans les pulsations du monophasé où elle tombe à zéro deux fois par cycle, ce qui évite les vibrations et améliore l'efficacité des moteurs asynchrones (auto-démarrage, couple constant). Dans l'industrie, il alimente les machines-outils, ascenseurs, pompes, compresseurs et data centers au-delà de 18 kVA, tandis que dans les habitats, il est utile pour les gros appareils comme les fours ou les chargeurs de véhicules électriques. Économiquement, il optimise les abonnements électriques et réduit les coûts d'installation ; techniquement, il équilibre les charges, diminue les chutes de tension et facilite la distribution dans les réseaux publics. Cependant, il nécessite un compteur spécifique et peut être plus complexe à installer, mais ses bénéfices en efficacité énergétique (jusqu'à 1,73 fois supérieure) en font le choix préféré pour les usages professionnels.
+        </div>
+    </section>
+    
+    <footer>
+        <p>Site créé pour les élèves de Bac Pro. Conforme au programme officiel 2025. Sources : YouTube et ressources éducatives.</p>
+    </footer>
+
+    <script>
+        // Conductor Simulation
+        let mode = 'tri';
+        function toggleMode(newMode) {
+            mode = newMode;
+        }
+        const conductorCtx = document.getElementById('conductorSim').getContext('2d');
+        let t = 0;
+        function drawConductors() {
+            conductorCtx.clearRect(0, 0, 400, 200);
+            conductorCtx.lineWidth = 6;
+            
+            if (mode === 'mono') {
+                // Phase (rouge)
+                conductorCtx.strokeStyle = '#ff0000';
+                conductorCtx.beginPath();
+                conductorCtx.moveTo(20, 50);
+                conductorCtx.lineTo(20 + (t % 360), 50);
+                conductorCtx.stroke();
+                
+                // Neutre
+                conductorCtx.strokeStyle = '#87ceeb';
+                conductorCtx.beginPath();
+                conductorCtx.moveTo(20, 100);
+                conductorCtx.lineTo(380, 100);
+                conductorCtx.stroke();
+                
+                // Terre
+                conductorCtx.strokeStyle = '#228b22';
+                conductorCtx.beginPath();
+                conductorCtx.moveTo(20, 150);
+                conductorCtx.lineTo(380, 150);
+                conductorCtx.stroke();
+                
+                conductorCtx.fillStyle = '#ffffff';
+                conductorCtx.font = '12px Roboto';
+                conductorCtx.fillText('Phase', 25, 45);
+                conductorCtx.fillText('Neutre', 25, 95);
+                conductorCtx.fillText('Terre', 25, 145);
+            } else {
+                // L1
+                conductorCtx.strokeStyle = '#8b4513';
+                conductorCtx.beginPath();
+                conductorCtx.moveTo(20, 30);
+                conductorCtx.lineTo(20 + (t % 360), 30);
+                conductorCtx.stroke();
+                
+                // L2
+                conductorCtx.strokeStyle = '#000000';
+                conductorCtx.beginPath();
+                conductorCtx.moveTo(20, 70);
+                conductorCtx.lineTo(20 + ((t - 120) % 360), 70);
+                conductorCtx.stroke();
+                
+                // L3
+                conductorCtx.strokeStyle = '#808080';
+                conductorCtx.beginPath();
+                conductorCtx.moveTo(20, 110);
+                conductorCtx.lineTo(20 + ((t - 240) % 360), 110);
+                conductorCtx.stroke();
+                
+                // Neutre
+                conductorCtx.strokeStyle = '#87ceeb';
+                conductorCtx.beginPath();
+                conductorCtx.moveTo(20, 150);
+                conductorCtx.lineTo(380, 150);
+                conductorCtx.stroke();
+                
+                // Terre
+                conductorCtx.strokeStyle = '#228b22';
+                conductorCtx.beginPath();
+                conductorCtx.moveTo(20, 190);
+                conductorCtx.lineTo(380, 190);
+                conductorCtx.stroke();
+                
+                conductorCtx.fillStyle = '#ffffff';
+                conductorCtx.font = '12px Roboto';
+                conductorCtx.fillText('L1', 25, 25);
+                conductorCtx.fillText('L2', 25, 65);
+                conductorCtx.fillText('L3', 25, 105);
+                conductorCtx.fillText('Neutre', 25, 145);
+                conductorCtx.fillText('Terre', 25, 185);
+            }
+            t += 5;
+            requestAnimationFrame(drawConductors);
+        }
+        drawConductors();
+
+        // Wave Simulation
+        let freq = 50;
+        let speedFactor = 1;
+        function changeFrequency(newFreq) {
+            freq = newFreq;
+            speedFactor = freq / 50;
+        }
+        const waveCtx = document.getElementById('waveSim').getContext('2d');
+        let waveT = 0;
+        const cycles = 2; // Nombre de cycles affichés
+        function drawWaves() {
+            waveCtx.clearRect(0, 0, 600, 300);
+            waveCtx.lineWidth = 2;
+            
+            // Grid
+            waveCtx.strokeStyle = '#444444';
+            for (let y = 0; y < 300; y += 30) {
+                waveCtx.beginPath();
+                waveCtx.moveTo(0, y);
+                waveCtx.lineTo(600, y);
+                waveCtx.stroke();
+            }
+            for (let x = 0; x < 600; x += 30) {
+                waveCtx.beginPath();
+                waveCtx.moveTo(x, 0);
+                waveCtx.lineTo(x, 300);
+                waveCtx.stroke();
+            }
+            
+            // Axes
+            waveCtx.strokeStyle = '#ffffff';
+            waveCtx.beginPath();
+            waveCtx.moveTo(0, 150);
+            waveCtx.lineTo(600, 150);
+            waveCtx.stroke();
+            
+            // L1
+            waveCtx.strokeStyle = '#ffd700';
+            waveCtx.beginPath();
+            for (let x = 0; x < 600; x++) {
+                let y = 150 - 120 * Math.sin(2 * Math.PI * cycles * (x / 600) + waveT);
+                waveCtx.lineTo(x, y);
+            }
+            waveCtx.stroke();
+            
+            // L2
+            waveCtx.strokeStyle = '#00bfff';
+            waveCtx.beginPath();
+            for (let x = 0; x < 600; x++) {
+                let y = 150 - 120 * Math.sin(2 * Math.PI * cycles * (x / 600) + waveT - 2 * Math.PI / 3);
+                waveCtx.lineTo(x, y);
+            }
+            waveCtx.stroke();
+            
+            // L3
+            waveCtx.strokeStyle = '#ff4500';
+            waveCtx.beginPath();
+            for (let x = 0; x < 600; x++) {
+                let y = 150 - 120 * Math.sin(2 * Math.PI * cycles * (x / 600) + waveT - 4 * Math.PI / 3);
+                waveCtx.lineTo(x, y);
+            }
+            waveCtx.stroke();
+            
+            waveCtx.fillStyle = '#ffffff';
+            waveCtx.font = '14px Roboto';
+            waveCtx.fillText('L1', 570, 30);
+            waveCtx.fillText('L2', 570, 50);
+            waveCtx.fillText('L3', 570, 70);
+            
+            waveT += 0.05 * speedFactor;
+            requestAnimationFrame(drawWaves);
+        }
+        drawWaves();
+
+        // Calculate U
+        function calculateU() {
+            let uSimple = parseFloat(document.getElementById('uSimple').value);
+            let uComp = Math.sqrt(3) * uSimple;
+            document.getElementById('uResult').innerText = `U Composée ≈ ${uComp.toFixed(2)} V`;
+        }
+
+        // Quizzes with feedback
+        function checkQuiz1() {
+            const form = document.getElementById('quiz1');
+            const result = document.getElementById('result1');
+            let score = 0;
+            let feedback = '';
+            
+            const q1 = form.q1.value;
+            if (q1 === 'b') { score++; feedback += '<p style="color:green;">Q1 : Correct ! Bleu pour le neutre.</p>'; } else { feedback += '<p style="color:red;">Q1 : Incorrect. Bonne réponse : Bleu.</p>'; }
+            
+            const q2 = form.q2.value;
+            if (q2 === 'b') { score++; feedback += '<p style="color:green;">Q2 : Correct ! Bleu interdit pour phase.</p>'; } else { feedback += '<p style="color:red;">Q2 : Incorrect. Bonne réponse : Bleu.</p>'; }
+            
+            const q3 = form.q3.value;
+            if (q3 === 'b') { score++; feedback += '<p style="color:green;">Q3 : Correct ! 3 phases en triphasé.</p>'; } else { feedback += '<p style="color:red;">Q3 : Incorrect. Bonne réponse : 3.</p>'; }
+            
+            const q4 = form.q4.value;
+            if (q4 === 'b') { score++; feedback += '<p style="color:green;">Q4 : Correct ! Vert-Jaune pour la terre.</p>'; } else { feedback += '<p style="color:red;">Q4 : Incorrect. Bonne réponse : Vert-Jaune.</p>'; }
+            
+            const q5 = form.q5.value;
+            if (q5 === 'a') { score++; feedback += '<p style="color:green;">Q5 : Correct ! Marron pour L1.</p>'; } else { feedback += '<p style="color:red;">Q5 : Incorrect. Bonne réponse : Marron.</p>'; }
+            
+            const q6 = form.q6.value;
+            if (q6 === 'b') { score++; feedback += '<p style="color:green;">Q6 : Correct ! Pour la sécurité.</p>'; } else { feedback += '<p style="color:red;">Q6 : Incorrect. Bonne réponse : Pour la sécurité.</p>'; }
+            
+            feedback += `<p>Score total : ${score}/6</p>`;
+            result.innerHTML = feedback;
+        }
+
+        function checkQuiz2() {
+            const form = document.getElementById('quiz2');
+            const result = document.getElementById('result2');
+            let score = 0;
+            let feedback = '';
+            
+            const q1 = form.q1.value;
+            if (q1 === 'b') { score++; feedback += '<p style="color:green;">Q1 : Correct ! 120°.</p>'; } else { feedback += '<p style="color:red;">Q1 : Incorrect. Bonne réponse : 120°.</p>'; }
+            
+            const q2 = form.q2.value;
+            if (q2 === 'b') { score++; feedback += '<p style="color:green;">Q2 : Correct ! Oscilloscope.</p>'; } else { feedback += '<p style="color:red;">Q2 : Incorrect. Bonne réponse : Oscilloscope.</p>'; }
+            
+            const q3 = form.q3.value;
+            if (q3 === 'b') { score++; feedback += '<p style="color:green;">Q3 : Correct ! Sinusoïdale.</p>'; } else { feedback += '<p style="color:red;">Q3 : Incorrect. Bonne réponse : Sinusoïdale.</p>'; }
+            
+            const q4 = form.q4.value;
+            if (q4 === 'b') { score++; feedback += '<p style="color:green;">Q4 : Correct ! 3 phases.</p>'; } else { feedback += '<p style="color:red;">Q4 : Incorrect. Bonne réponse : 3.</p>'; }
+            
+            const q5 = form.q5.value;
+            if (q5 === 'b') { score++; feedback += '<p style="color:green;">Q5 : Correct ! Puissance constante.</p>'; } else { feedback += '<p style="color:red;">Q5 : Incorrect. Bonne réponse : Puissance constante.</p>'; }
+            
+            const q6 = form.q6.value;
+            if (q6 === 'b') { score++; feedback += '<p style="color:green;">Q6 : Correct ! Phase-neutre.</p>'; } else { feedback += '<p style="color:red;">Q6 : Incorrect. Bonne réponse : Phase-neutre.</p>'; }
+            
+            feedback += `<p>Score total : ${score}/6</p>`;
+            result.innerHTML = feedback;
+        }
+
+        function checkQuiz3() {
+            const form = document.getElementById('quiz3');
+            const result = document.getElementById('result3');
+            let score = 0;
+            let feedback = '';
+            
+            const q1 = form.q1.value;
+            if (q1 === 'b') { score++; feedback += '<p style="color:green;">Q1 : Correct ! √3.</p>'; } else { feedback += '<p style="color:red;">Q1 : Incorrect. Bonne réponse : √3.</p>'; }
+            
+            const q2 = form.q2.value;
+            if (q2 === 'b') { score++; feedback += '<p style="color:green;">Q2 : Correct ! 400V.</p>'; } else { feedback += '<p style="color:red;">Q2 : Incorrect. Bonne réponse : 400V.</p>'; }
+            
+            const q3 = form.q3.value;
+            if (q3 === 'b') { score++; feedback += '<p style="color:green;">Q3 : Correct ! Déphasage 120°.</p>'; } else { feedback += '<p style="color:red;">Q3 : Incorrect. Bonne réponse : Déphasage 120°.</p>'; }
+            
+            const q4 = form.q4.value;
+            if (q4 === 'b') { score++; feedback += '<p style="color:green;">Q4 : Correct ! Simple.</p>'; } else { feedback += '<p style="color:red;">Q4 : Incorrect. Bonne réponse : Simple.</p>'; }
+            
+            const q5 = form.q5.value;
+            if (q5 === 'a') { score++; feedback += '<p style="color:green;">Q5 : Correct ! 230V.</p>'; } else { feedback += '<p style="color:red;">Q5 : Incorrect. Bonne réponse : 230V.</p>'; }
+            
+            const q6 = form.q6.value;
+            if (q6 === 'b') { score++; feedback += '<p style="color:green;">Q6 : Correct ! Équilibré.</p>'; } else { feedback += '<p style="color:red;">Q6 : Incorrect. Bonne réponse : Équilibré.</p>'; }
+            
+            feedback += `<p>Score total : ${score}/6</p>`;
+            result.innerHTML = feedback;
+        }
+    </script>
+</body>
+</html>
